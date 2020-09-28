@@ -1,0 +1,20 @@
+{
+    "identifier": "scrhllbrg.Twigger",
+    "name": "Twigger",
+    "organization": "Scrhllbrg",
+    "description": "Twig syntax highlighting",
+    "version": "0.0.1",
+    "license": "MIT",
+    "keywords": ["twig", "nova", "syntax", "panic"],
+    "categories": ["languages", "completions"],
+    "repository": "https://github.com/scrhllbrg/twigger",
+    "bugs": "https://github.com/scrhllbrg/twigger/issues",
+    "buildFileTypes": {
+        "twig": {
+            "name": "Twig",
+            "extensions": ["twig", "html.twig"],
+            "category": "markup"
+        }
+    },
+    "main": "main.dist.js"
+}

@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<syntax name="twig">
+	<meta>
+		<name>Twig</name>
+		<type>markup</type>
+		<parent>html</parent>
+		<preferred-file-extension>twig</preferred-file-extension>
+	</meta>
+
+	<detectors>
+		<extension priority="1.0">twig</extension>
+	</detectors>
+
+	<indentation>
+			<increase>
+				<expression>(?x)
+					(&lt;(?!\?|(?:area|base|br|col|embed|hr|img|input|link|meta|param|source|track|wbr)\b)
+					([-_\.A-Za-z0-9]+)(?=\s|&gt;)\b[^&gt;]*&gt;[^&lt;]*$)
+					|(&lt;!--\s*$)
+				</expression>
+			</increase>
+			<decrease>
+				<expression>(?x)
+					^\s*
+					(&lt;/[-_\.A-Za-z0-9]+\b[^>]*&gt;
+						|--&gt;
+					)</expression>
+			</decrease>
+		</indentation>
+
+	<comments>
+		<multiline>
+			<starts-with>
+				<expression>{&#35;</expression>
+			</starts-with>
+			<ends-with>
+				<expression>&#35;}</expression>
+			</ends-with>
+		</multiline>
+	</comments>
+
+	<brackets>
+		<!-- <pair open="{{" close="}}" />
+		<pair open="{%" close="%}" /> -->
+		<pair open="[" close="]" />
+		<pair open="&lt;" close="&gt;" />
+	</brackets>
+
+	<surrounding-pairs>
+		<pair open="{{" close="}}" />
+		<pair open="{%" close="%}" />
+		<pair open="[" close="]" />
+		<pair open="&lt;" close="&gt;" />
+		<pair open="'" close="'" />
+		<pair open="&quot;" close="&quot;" />
+	</surrounding-pairs>
+
+	<scopes spell-check="true" lookup="dictionary">
+		<!-- Comments -->
+		<scope name="twig.comment.block">
+			<starts-with>
+				<expression>{&#35;</expression>
+			</starts-with>
+			<ends-with>
+				<expression>&#35;}</expression>
+			</ends-with>
+		</scope>
+		<include syntax="self" collection="twig-style"/>
+		<include syntax="self" collection="twig-template"/>
+		<include syntax="self" collection="twig-generic"/>
+		<include syntax="html" collection="attributes" />
+	</scopes>
+
+	<collections>
+		<!-- Generic -->
+		<collection name="twig-generic">
+			<!-- Opening Tags -->
+			<scope name="twig.tag.open.paired" spell-check="false" lookup="documentation">
+				<symbol type="tag">
+					<display-name>
+						<component variable="name" />
+						<component selector="tag.attribute.value.id" prepend="#" />
+						<component selector="tag.attribute.value.class" prepend="." replace="\s+" replace-with="." />
+					</display-name>
+					<context behavior="start" group-by-name="true" unclosed="parent">
+						<auto-close string="&lt;/" completion="${name}&gt;" />
+					</context>
+				</symbol>
+				<starts-with>
+					<expression>&lt;(?!/)([a-zA-Z_][a-zA-Z0-9_:-]*)?</expression>
+					<capture number="1" name="twig.tag.name" />
+				</starts-with>
+				<ends-with>
+					<expression>/?&gt;</expression>
+				</ends-with>
+				<subscopes>
+					<include syntax="html" collection="attributes" />
+				</subscopes>
+			</scope>
+			<!-- Closing Tags -->
+			<scope name="twig.tag.close" spell-check="false" lookup="documentation">
+				<symbol type="tag">
+					<context behavior="end" group-by-name="true" unclosed="truncate" />
+				</symbol>
+				<expression>&lt;/([a-zA-Z_][a-zA-Z0-9_:-]*)&gt;</expression>
+				<capture number="1" name="twig.tag.name" />
+			</scope>
+		</collection>
+		<!-- Style -->
+		<collection name="twig-style">
+			<!-- CSS -->
+			<scope name="twig.embedded.block.style" spell-check="false" lookup="documentation">
+				<starts-with>
+					<expression>(?=&lt;(?i:style)\b)</expression>
+				</starts-with>
+				<ends-with>
+					<expression>(?=&lt;/(?i:style)\b)</expression>
+				</ends-with>
+				<subscopes>
+					<scope name="twig.tag.style.open">
+						<symbol type="tag-style">
+							<context behavior="start" group-by-name="true">
+								<auto-close string="&lt;/" completion="${name}&gt;" />
+							</context>
+						</symbol>
+						<starts-with>
+							<expression>&lt;((?i:style))</expression>
+							<capture number="1" name="twig.tag.name" />
+						</starts-with>
+						<ends-with>
+							<expression>/?&gt;</expression>
+						</ends-with>
+						<subscopes>
+							<include syntax="html" collection="attributes" />
+						</subscopes>
+					</scope>
+					<scope name="twig.embedded.block.style.content">
+						<starts-with>
+							<expression>(?&lt;=&gt;)</expression>
+						</starts-with>
+						<ends-with>
+							<expression>(?=&lt;/(?i:style)\b)</expression>
+						</ends-with>
+						<subsyntax name="css">
+							<cut-off>
+								<expression>(?=&lt;/(?i:style)\b)</expression>
+							</cut-off>
+						</subsyntax>
+					</scope>
+				</subscopes>
+			</scope>
+			<!-- Javascript -->
+			<scope name="twig.embedded.block.script" spell-check="false" lookup="documentation">
+				<starts-with>
+					<expression>(?=&lt;(?i:script)\b)</expression>
+				</starts-with>
+				<ends-with>
+					<expression>(?=&lt;/(?i:script)\b)</expression>
+				</ends-with>
+				<subscopes>
+					<scope name="twig.tag.script.open">
+						<symbol type="tag-script">
+							<display-name>
+								<component variable="name" />
+								<component selector="twig.tag.attribute.value.link" prepend=" – " />
+							</display-name>
+							<context behavior="start" group-by-name="true">
+								<auto-close string="&lt;/" completion="${name}&gt;" />
+							</context>
+						</symbol>
+						<starts-with>
+							<expression>&lt;((?i:script))</expression>
+							<capture number="1" name="twig.tag.name" />
+						</starts-with>
+						<ends-with>
+							<expression>/?&gt;</expression>
+						</ends-with>
+						<subscopes>
+							<include syntax="html" collection="attributes" />
+						</subscopes>
+					</scope>
+					<scope name="twig.embedded.block.script.content">
+						<starts-with>
+							<expression>(?&lt;=&gt;)</expression>
+						</starts-with>
+						<ends-with>
+							<expression>(?=&lt;/(?i:script)\b)</expression>
+						</ends-with>
+						<subsyntax name="javascript">
+							<cut-off>
+								<expression>(?=&lt;/(?i:script)\b)</expression>
+							</cut-off>
+						</subsyntax>
+					</scope>
+				</subscopes>
+			</scope>
+		</collection>
+
+		<collection name="twig-template">
+			<!-- HTML -->
+			<scope name="twig.embedded.block.template" spell-check="false" lookup="documentation">
+				<starts-with>
+					<expression>(?=&lt;(?i:template)\b)</expression>
+				</starts-with>
+				<ends-with>
+					<expression>(?=&lt;/(?i:template)\b)</expression>
+				</ends-with>
+				<subscopes>
+					<scope name="twig.tag.template.open">
+						<symbol type="tag-template">
+							<display-name>
+								<component variable="name" />
+								<component selector="twig.tag.attribute.value.link" prepend=" – " />
+							</display-name>
+							<context behavior="start" group-by-name="true">
+								<auto-close string="&lt;/" completion="${name}&gt;" />
+							</context>
+						</symbol>
+						<starts-with>
+							<expression>&lt;((?i:template))</expression>
+							<capture number="1" name="twig.tag.name" />
+						</starts-with>
+						<ends-with>
+							<expression>/?&gt;</expression>
+						</ends-with>
+						<subscopes>
+							<include syntax="html" collection="attributes" />
+						</subscopes>
+					</scope>
+					<scope name="twig.embedded.block.template.content">
+						<starts-with>
+							<expression>(?&lt;=&gt;)</expression>
+						</starts-with>
+						<ends-with>
+							<expression>(?=&lt;/(?i:template)\b)</expression>
+						</ends-with>
+
+						<subsyntax name="twig-html">
+							<cut-off>
+								<expression>(?=&lt;/(?i:template)\b)</expression>
+							</cut-off>
+						</subsyntax>
+					</scope>
+				</subscopes>
+			</scope>
+		</collection>
+
+	</collections>
+
+</syntax>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<completions>
+	<provider name="twig.misc.directives">
+		<syntax>twig</syntax>
+		<selector>html.tag.open, html.tag.open html.tag.attribute:not(value)</selector>
+		<expression>(?&lt;=\s)[a-zA-Z0-9-_]*$</expression>
+	</provider>
+	<set>twig.misc.directives.empty</set>
+	<set>twig.misc.directives.standard</set>
+
+	<!-- Empty Directives -->
+		<set name="twig.misc.directives.empty" symbol="property">
+			<completion string="set" />
+		</set>
+
+		<!-- Standard Directives -->
+		<set name="twig.misc.directives.standard" symbol="property">
+			<behavior complete-on-confirm="true">
+				<append>="$[]"</append>
+			</behavior>
+			<completion string="for" />
+		</set>
+</completions>
